@@ -26,3 +26,31 @@ jobs:
       - name: Run Biome CI
         run: pnpm biome ci .
 
+
+  vitest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm run build:packages
+
+      - name: Run Vitest
+        run: pnpm run test:coverage
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
