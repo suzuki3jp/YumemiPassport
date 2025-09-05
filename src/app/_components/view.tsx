@@ -11,9 +11,11 @@ export function HomeView() {
         </h1>
 
         <SelectedPrefecturesProvider>
+          <PopulationsCacheProvider>
           <PrefecturesContainer>
             <PrefecturesSection />
           </PrefecturesContainer>
+          </PopulationsCacheProvider>
         </SelectedPrefecturesProvider>
       </div>
     </div>
