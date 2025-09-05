@@ -16,6 +16,7 @@ export const BASE_URL =
 
 export const ApiEndpoints = {
   prefectures: "/prefectures",
+  population: "/population/composition/perYear",
 } as const;
 
 export type ApiEndpoints = typeof ApiEndpoints;
@@ -71,6 +72,15 @@ export function makeRequestHeader(apiKey: string): {
   };
 }
 
-export function makeUrl(endpoint: ApiEndpoints[keyof ApiEndpoints]): string {
-  return `${BASE_URL}${endpoint}`;
+export function makeUrl(
+  endpoint: ApiEndpoints[keyof ApiEndpoints],
+  params?: Record<string, string | number>,
+): string {
+  const url = new URL(`${BASE_URL}${endpoint}`);
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      url.searchParams.append(key, value.toString());
+    });
+  }
+  return url.toString();
 }

@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
 import z from "zod";
 
-import { handleFetchResponse, makeRequestHeader } from "./client";
+import {
+  ApiEndpoints,
+  BASE_URL,
+  handleFetchResponse,
+  makeRequestHeader,
+  makeUrl,
+} from "./client";
 import { NotFoundError } from "./error";
 
 const dummySchema = z.object({ success: z.boolean() });
@@ -38,5 +44,12 @@ describe("makeRequestHeader", () => {
     const apiKey = "test-key";
     const result = makeRequestHeader(apiKey);
     expect(result.headers["X-API-KEY"]).toBe(apiKey);
+  });
+});
+
+describe("makeUrl", () => {
+  it("should construct the correct URL", () => {
+    const result = makeUrl(ApiEndpoints.population, { prefCode: 23 });
+    expect(result).toBe(`${BASE_URL}${ApiEndpoints.population}?prefCode=23`);
   });
 });
