@@ -1,4 +1,5 @@
-import { PrefecturesList } from "./prefectures-list";
+import { PrefecturesContainer } from "@/features/prefecture/components/prefectures-container";
+import { PrefecturesSection } from "./prefectures-section";
 
 export function HomeView() {
   return (
@@ -8,7 +9,9 @@ export function HomeView() {
           都道府県別人口推移
         </h1>
 
-        <PrefecturesList />
+        <PrefecturesContainer>
+          <PrefecturesSection />
+        </PrefecturesContainer>
       </div>
     </div>
   );
