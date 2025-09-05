@@ -1,8 +1,16 @@
 "use server";
-import type { Result } from "neverthrow";
+import { err, type Result } from "neverthrow";
+
 import { getApiKey } from "@/lib/get-api-key";
-import { fetchFromPrefectureApi } from "@/lib/prefecture-api/client";
+import {
+  ApiEndpoints,
+  handleFetchResponse,
+  makeRequestHeader,
+  makeUrl,
+} from "@/lib/prefecture-api/client";
 import type { PrefectureApiError } from "@/lib/prefecture-api/error";
+import { PrefecturesSuccessResponse } from "@/lib/prefecture-api/response";
+import { safeFetch } from "@/lib/safe-fetch";
 import type { Prefecture } from "./schemas/prefecture";
 
 /**
@@ -12,15 +20,22 @@ export async function getPrefectures(): Promise<
   Result<Prefecture[], PrefectureApiError>
 > {
   const apiKey = getApiKey();
-  const fetchResult = await fetchFromPrefectureApi({
-    path: "/prefectures",
-    apiKey,
-  });
-  const mappedFetchResult = fetchResult.map<Prefecture[]>((res) =>
+  const responseResult = await safeFetch(
+    makeUrl(ApiEndpoints.prefectures),
+    makeRequestHeader(apiKey),
+  );
+  if (responseResult.isErr()) return err(responseResult.error);
+
+  const handledResponseResult = await handleFetchResponse(
+    responseResult.value,
+    PrefecturesSuccessResponse,
+  );
+  if (handledResponseResult.isErr()) return err(handledResponseResult.error);
+
+  return handledResponseResult.map<Prefecture[]>((res) =>
     res.result.map((prefecture) => ({
       code: prefecture.prefCode,
       name: prefecture.prefName,
     })),
   );
-  return mappedFetchResult;
 }

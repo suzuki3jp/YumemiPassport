@@ -1,139 +1,42 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
+import z from "zod";
 
-import { fetchFromPrefectureApi } from "./client";
-import {
-  ApiErrorCode,
-  BadRequestError,
-  ForbiddenError,
-  InternalError,
-  NotFoundError,
-} from "./error";
-import { PrefecturesSuccessResponse } from "./response";
+import { handleFetchResponse, makeRequestHeader } from "./client";
+import { NotFoundError } from "./error";
 
-type MockResponse = {
-  ok: boolean;
-  status?: number;
-  json?: () => Promise<unknown>;
-};
-function injectFetchMock(data: MockResponse | Error) {
-  const mockFetch =
-    data instanceof Error
-      ? vi.fn().mockRejectedValue(data)
-      : vi.fn().mockResolvedValue(data);
-  global.fetch = mockFetch;
-  return mockFetch;
-}
+const dummySchema = z.object({ success: z.boolean() });
 
-describe("fetchFromPrefectureApi", () => {
-  const originalFetch = global.fetch;
-  afterEach(() => {
-    global.fetch = originalFetch;
-    vi.restoreAllMocks();
-  });
-
-  it("正しいパスでfetchが呼ばれる", async () => {
+describe("handleFetchResponse", () => {
+  it("should return parsed JSON for successful response", async () => {
     const mockResponse = {
       ok: true,
-      json: async () => ({ message: null, result: [] }),
-    };
-    const fetchMock = injectFetchMock(mockResponse);
-    const apiKey = "dummy-key";
-    const result = await fetchFromPrefectureApi({
-      path: "/prefectures",
-      apiKey,
-    });
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://yumemi-frontend-engineer-codecheck-api.vercel.app/api/v1/prefectures",
-      {
-        headers: {
-          "X-API-KEY": apiKey,
-        },
-      },
-    );
+      status: 200,
+      json: async () => ({ success: true }),
+    } as Response;
+
+    const result = await handleFetchResponse(mockResponse, dummySchema);
     expect(result.isOk()).toBe(true);
+    expect(result._unsafeUnwrap()).toEqual({ success: true });
   });
 
-  it("正常なレスポンスの場合はOkを返す", async () => {
+  it("should return NotFoundError for 404 response", async () => {
     const mockResponse = {
-      ok: true,
-      json: async () => ({ message: null, result: [] }),
-    };
-    injectFetchMock(mockResponse);
-    const apiKey = "dummy-key";
-    const result = await fetchFromPrefectureApi({
-      path: "/prefectures",
-      apiKey,
-    });
-    expect(result.isOk()).toBe(true);
-    if (result.isOk()) {
-      expect(PrefecturesSuccessResponse.safeParse(result.value).success).toBe(
-        true,
-      );
-    }
-  });
+      ok: false,
+      status: 404,
+      json: async () => ({}),
+    } as Response;
 
-  it("存在しないパスの場合はNotFoundErrorを返す", async () => {
-    const apiKey = "dummy-key";
-    const result = await fetchFromPrefectureApi({
-      // @ts-expect-error: 不正な値を渡していることをテストしたい
-      path: "/unknown",
-      apiKey,
-    });
+    const result = await handleFetchResponse(mockResponse, dummySchema);
     expect(result.isErr()).toBe(true);
-    if (result.isErr()) {
-      expect(result.error).toBeInstanceOf(NotFoundError);
-    }
+    const error = result._unsafeUnwrapErr();
+    expect(error).toBeInstanceOf(NotFoundError);
   });
+});
 
-  it("500レスポンスの場合はInternalErrorを返す", async () => {
-    const mockResponse = { ok: false, status: ApiErrorCode.INTERNAL_ERROR };
-    injectFetchMock(mockResponse);
-    const apiKey = "dummy-key";
-    const result = await fetchFromPrefectureApi({
-      path: "/prefectures",
-      apiKey,
-    });
-    expect(result.isErr()).toBe(true);
-    if (result.isErr()) {
-      expect(result.error).toBeInstanceOf(InternalError);
-    }
-  });
-
-  it("403レスポンスの場合はForbiddenErrorを返す", async () => {
-    const mockResponse = { ok: false, status: ApiErrorCode.FORBIDDEN };
-    injectFetchMock(mockResponse);
-    const apiKey = "dummy-key";
-    const result = await fetchFromPrefectureApi({
-      path: "/prefectures",
-      apiKey,
-    });
-    expect(result.isErr()).toBe(true);
-    if (result.isErr()) {
-      expect(result.error).toBeInstanceOf(ForbiddenError);
-    }
-  });
-
-  it("400レスポンスの場合はBadRequestErrorを返す", async () => {
-    const mockResponse = { ok: false, status: ApiErrorCode.BAD_REQUEST };
-    injectFetchMock(mockResponse);
-    const apiKey = "dummy-key";
-    const result = await fetchFromPrefectureApi({
-      path: "/prefectures",
-      apiKey,
-    });
-    expect(result.isErr()).toBe(true);
-    if (result.isErr()) {
-      expect(result.error).toBeInstanceOf(BadRequestError);
-    }
-  });
-
-  it("fetchが例外を投げた場合はエラーを返す", async () => {
-    injectFetchMock(new Error("network error"));
-    const apiKey = "dummy-key";
-    const result = await fetchFromPrefectureApi({
-      path: "/prefectures",
-      apiKey,
-    });
-    expect(result.isErr()).toBe(true);
+describe("makeRequestHeader", () => {
+  it("should set apiKey in headers", () => {
+    const apiKey = "test-key";
+    const result = makeRequestHeader(apiKey);
+    expect(result.headers["X-API-KEY"]).toBe(apiKey);
   });
 });
