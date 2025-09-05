@@ -1,11 +1,12 @@
 import { Checkbox } from "@/components/checkbox";
 import { ErrorCard } from "@/components/error-card";
 import { getPrefectures } from "@/features/prefecture/get-prefectures";
+import { isErr } from "@/lib/serializable-result";
 
 export async function PrefecturesList() {
   const prefectures = await getPrefectures();
 
-  if (prefectures.isErr())
+  if (isErr(prefectures))
     return (
       <ErrorCard
         title="エラーが発生しました"

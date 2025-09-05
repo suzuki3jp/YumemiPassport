@@ -1,7 +1,13 @@
 import { err, ok } from "neverthrow";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
+import { PrefectureApiErrorCode } from "@/lib/prefecture-api/error";
 import { safeFetch } from "@/lib/safe-fetch";
+import {
+  _unsafeUnwrap,
+  _unsafeUnwrapErr,
+  isErr,
+  isOk,
+} from "@/lib/serializable-result";
 import { getPopulation } from "./get-population";
 
 vi.mock("@/lib/safe-fetch");
@@ -31,8 +37,10 @@ describe("getPopulation", () => {
     mockSafeFetch.mockResolvedValueOnce(err(error));
 
     const result = await getPopulation(1);
-    expect(result.isErr()).toBe(true);
-    expect(result._unsafeUnwrapErr()).toEqual(error);
+    expect(isErr(result)).toBe(true);
+    expect(_unsafeUnwrapErr(result)).toEqual(
+      PrefectureApiErrorCode.FETCH_ERROR,
+    );
   });
 
   it("safeFetchの返り値が正常系の場合、Population型に変換される", async () => {
@@ -56,8 +64,8 @@ describe("getPopulation", () => {
     );
 
     const result = await getPopulation(1);
-    expect(result.isOk()).toBe(true);
-    expect(result._unsafeUnwrap()).toEqual([
+    expect(isOk(result)).toBe(true);
+    expect(_unsafeUnwrap(result)).toEqual([
       {
         label: "総人口",
         data: [

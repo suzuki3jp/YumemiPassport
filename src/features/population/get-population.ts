@@ -1,6 +1,4 @@
 "use server";
-import { err, type Result } from "neverthrow";
-
 import { getApiKey } from "@/lib/get-api-key";
 import {
   ApiEndpoints,
@@ -8,9 +6,10 @@ import {
   makeRequestHeader,
   makeUrl,
 } from "@/lib/prefecture-api/client";
-import type { PrefectureApiError } from "@/lib/prefecture-api/error";
+import { PrefectureApiErrorCode } from "@/lib/prefecture-api/error";
 import { PopulationSuccessResponse } from "@/lib/prefecture-api/response";
 import { safeFetch } from "@/lib/safe-fetch";
+import { err, ok, type SerializableResult } from "@/lib/serializable-result";
 import type { Population } from "./schemas/population";
 
 /**
@@ -18,22 +17,21 @@ import type { Population } from "./schemas/population";
  */
 export async function getPopulation(
   prefCode: number,
-): Promise<Result<Population[], PrefectureApiError>> {
+): Promise<SerializableResult<Population[], PrefectureApiErrorCode>> {
   const apiKey = getApiKey();
   const responseResult = await safeFetch(
     makeUrl(ApiEndpoints.population, { prefCode }),
     makeRequestHeader(apiKey),
   );
-  if (responseResult.isErr()) return err(responseResult.error);
+  if (responseResult.isErr()) return err(PrefectureApiErrorCode.FETCH_ERROR);
 
-  const handledResponseResult = await handleFetchResponse(
-    responseResult.value,
-    PopulationSuccessResponse,
-  );
+  const handledResponseResult = (
+    await handleFetchResponse(responseResult.value, PopulationSuccessResponse)
+  ).map((res) => convertToPopulation(res.result.data));
 
-  return handledResponseResult.map((res) =>
-    convertToPopulation(res.result.data),
-  );
+  if (handledResponseResult.isErr()) return err(handledResponseResult.error);
+
+  return ok(handledResponseResult.value);
 }
 
 function convertToPopulation(

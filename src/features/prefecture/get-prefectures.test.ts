@@ -1,7 +1,13 @@
 import { err, ok } from "neverthrow";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
+import { PrefectureApiErrorCode } from "@/lib/prefecture-api/error";
 import { safeFetch } from "@/lib/safe-fetch";
+import {
+  _unsafeUnwrap,
+  _unsafeUnwrapErr,
+  isErr,
+  isOk,
+} from "@/lib/serializable-result";
 import { getPrefectures } from "./get-prefectures";
 
 vi.mock("@/lib/safe-fetch");
@@ -31,8 +37,10 @@ describe("getPrefectures", () => {
     mockSafeFetch.mockResolvedValueOnce(err(error));
 
     const result = await getPrefectures();
-    expect(result.isErr()).toBe(true);
-    expect(result._unsafeUnwrapErr()).toEqual(error);
+    expect(isErr(result)).toBe(true);
+    expect(_unsafeUnwrapErr(result)).toEqual(
+      PrefectureApiErrorCode.FETCH_ERROR,
+    );
   });
 
   it("safeFetchの返り値が正常系の場合、Prefecture型に変換される", async () => {
@@ -48,8 +56,8 @@ describe("getPrefectures", () => {
     );
 
     const result = await getPrefectures();
-    expect(result.isOk()).toBe(true);
-    expect(result._unsafeUnwrap()).toEqual([
+    expect(isOk(result)).toBe(true);
+    expect(_unsafeUnwrap(result)).toEqual([
       { code: 1, name: "北海道" },
       { code: 13, name: "東京都" },
     ]);

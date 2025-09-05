@@ -8,7 +8,7 @@ import {
   makeRequestHeader,
   makeUrl,
 } from "./client";
-import { NotFoundError } from "./error";
+import { PrefectureApiErrorCode } from "./error";
 
 const dummySchema = z.object({ success: z.boolean() });
 
@@ -25,7 +25,7 @@ describe("handleFetchResponse", () => {
     expect(result._unsafeUnwrap()).toEqual({ success: true });
   });
 
-  it("should return NotFoundError for 404 response", async () => {
+  it("should return NOT_FOUND for 404 response", async () => {
     const mockResponse = {
       ok: false,
       status: 404,
@@ -35,7 +35,7 @@ describe("handleFetchResponse", () => {
     const result = await handleFetchResponse(mockResponse, dummySchema);
     expect(result.isErr()).toBe(true);
     const error = result._unsafeUnwrapErr();
-    expect(error).toBeInstanceOf(NotFoundError);
+    expect(error).toEqual(PrefectureApiErrorCode.NOT_FOUND);
   });
 });
 
