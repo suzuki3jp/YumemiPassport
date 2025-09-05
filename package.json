@@ -12,6 +12,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@testing-library/jest-dom": "^6.8.0",
     "neverthrow": "^8.2.0",
     "next": "15.5.2",
     "react": "19.1.0",
