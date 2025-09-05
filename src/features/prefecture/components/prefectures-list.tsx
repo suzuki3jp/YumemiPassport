@@ -1,7 +1,7 @@
 "use client";
-import { Checkbox } from "@/components/checkbox";
 import { ErrorCard } from "@/components/error-card";
 import { usePrefectures } from "../contexts/prefectures";
+import { PrefectureCheckbox } from "./prefecture-checkbox";
 
 export function PrefecturesList() {
   const prefectures = usePrefectures();
@@ -17,9 +17,9 @@ export function PrefecturesList() {
   return (
     <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 lg:grid-cols-6">
       {prefectures.map((prefecture) => (
-        <Checkbox
+        <PrefectureCheckbox
+          prefecture={prefecture}
           key={`prefecture-checkbox-${prefecture.code}`}
-          title={prefecture.name}
         />
       ))}
     </div>

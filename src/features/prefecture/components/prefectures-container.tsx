@@ -2,7 +2,6 @@ import type { PropsWithChildren } from "react";
 import "server-only";
 
 import { PrefecturesProvider } from "../contexts/prefectures";
-import { SelectedPrefecturesProvider } from "../contexts/selected-prefectures";
 import { getPrefectures } from "../get-prefectures";
 
 export async function PrefecturesContainer({ children }: PropsWithChildren) {
@@ -10,7 +9,7 @@ export async function PrefecturesContainer({ children }: PropsWithChildren) {
 
   return (
     <PrefecturesProvider prefectures={prefectures}>
-      <SelectedPrefecturesProvider>{children}</SelectedPrefecturesProvider>
+      {children}
     </PrefecturesProvider>
   );
 }

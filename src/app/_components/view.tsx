@@ -1,3 +1,4 @@
+import { SelectedPrefecturesProvider } from "@/contexts/selected-prefectures";
 import { PrefecturesContainer } from "@/features/prefecture/components/prefectures-container";
 import { PrefecturesSection } from "./prefectures-section";
 
@@ -9,9 +10,11 @@ export function HomeView() {
           都道府県別人口推移
         </h1>
 
-        <PrefecturesContainer>
-          <PrefecturesSection />
-        </PrefecturesContainer>
+        <SelectedPrefecturesProvider>
+          <PrefecturesContainer>
+            <PrefecturesSection />
+          </PrefecturesContainer>
+        </SelectedPrefecturesProvider>
       </div>
     </div>
   );
