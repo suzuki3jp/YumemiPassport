@@ -1,3 +1,3 @@
-export default function () {
-  return <p>coming soon...</p>;
-}
+import { HomeView } from "./_components/view";
+
+export default HomeView;
