@@ -8,11 +8,11 @@ import {
   isErr,
   isOk,
 } from "@/lib/serializable-result";
-import { getPrefectures } from "./get-prefectures";
+import { getPopulation } from "./get-population";
 
 vi.mock("@/lib/safe-fetch");
 
-describe("getPrefectures", () => {
+describe("getPopulation", () => {
   const mockSafeFetch = safeFetch as unknown as ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
@@ -22,12 +22,12 @@ describe("getPrefectures", () => {
 
   it("safeFetchの引数を検証する", async () => {
     mockSafeFetch.mockResolvedValueOnce(
-      ok(new Response(JSON.stringify({ message: null, result: [] }))),
+      ok(new Response(JSON.stringify({ message: null, result: { data: [] } }))),
     );
 
-    await getPrefectures();
+    await getPopulation(1);
     expect(mockSafeFetch).toHaveBeenCalledWith(
-      expect.stringContaining("prefectures"),
+      expect.stringContaining("population"),
       expect.any(Object),
     );
   });
@@ -36,30 +36,43 @@ describe("getPrefectures", () => {
     const error = { message: "error" };
     mockSafeFetch.mockResolvedValueOnce(err(error));
 
-    const result = await getPrefectures();
+    const result = await getPopulation(1);
     expect(isErr(result)).toBe(true);
     expect(_unsafeUnwrapErr(result)).toEqual(
       PrefectureApiErrorCode.FETCH_ERROR,
     );
   });
 
-  it("safeFetchの返り値が正常系の場合、Prefecture型に変換される", async () => {
+  it("safeFetchの返り値が正常系の場合、Population型に変換される", async () => {
     const apiResponse = {
       message: null,
-      result: [
-        { prefCode: 1, prefName: "北海道" },
-        { prefCode: 13, prefName: "東京都" },
-      ],
+      result: {
+        boundaryYear: 2025,
+        data: [
+          {
+            label: "総人口",
+            data: [
+              { year: 2020, value: 100, rate: undefined },
+              { year: 2025, value: 110, rate: 1.1 },
+            ],
+          },
+        ],
+      },
     };
     mockSafeFetch.mockResolvedValueOnce(
       ok(new Response(JSON.stringify(apiResponse))),
     );
 
-    const result = await getPrefectures();
+    const result = await getPopulation(1);
     expect(isOk(result)).toBe(true);
     expect(_unsafeUnwrap(result)).toEqual([
-      { code: 1, name: "北海道" },
-      { code: 13, name: "東京都" },
+      {
+        label: "総人口",
+        data: [
+          { year: 2020, population: 100, rate: undefined },
+          { year: 2025, population: 110, rate: 1.1 },
+        ],
+      },
     ]);
   });
 });
