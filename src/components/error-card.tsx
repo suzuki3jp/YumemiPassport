@@ -1,4 +1,5 @@
 import { TriangleAlert } from "lucide-react";
+import { ReloadButton } from "./reload-button";
 
 interface ErrorCardProps {
   title: string;
@@ -13,6 +14,7 @@ export function ErrorCard({ title, description }: ErrorCardProps) {
         <div className="flex-1">
           <h3 className="mb-1 font-medium text-red-800 text-sm">{title}</h3>
           <p className="text-red-700 text-sm">{description}</p>
+          <ReloadButton />
         </div>
       </div>
     </div>
