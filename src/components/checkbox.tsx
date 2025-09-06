@@ -23,7 +23,7 @@ export function Checkbox({
           setIsChecked(!isChecked);
           onChange?.(!isChecked);
         }}
-        className="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500"
+        className="h-4 w-4 cursor-pointer rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500"
       />
       <span className="text-gray-700 text-sm">{title}</span>
     </label>
