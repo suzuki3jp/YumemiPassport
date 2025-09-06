@@ -1,4 +1,8 @@
-import { PrefecturesList } from "./prefectures-list";
+import { PopulationsCacheProvider } from "@/contexts/populations-cache";
+import { SelectedPrefecturesProvider } from "@/contexts/selected-prefectures";
+import { PrefecturesContainer } from "@/features/prefecture/components/prefectures-container";
+import { PopulationSection } from "./population-section";
+import { PrefecturesSection } from "./prefectures-section";
 
 export function HomeView() {
   return (
@@ -8,7 +12,14 @@ export function HomeView() {
           都道府県別人口推移
         </h1>
 
-        <PrefecturesList />
+        <SelectedPrefecturesProvider>
+          <PopulationsCacheProvider>
+            <PrefecturesContainer>
+              <PrefecturesSection />
+              <PopulationSection />
+            </PrefecturesContainer>
+          </PopulationsCacheProvider>
+        </SelectedPrefecturesProvider>
       </div>
     </div>
   );
