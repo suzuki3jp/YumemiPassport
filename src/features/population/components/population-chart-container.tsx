@@ -1,6 +1,7 @@
 "use client";
 import { ErrorCard } from "@/components/error-card";
 import { usePopulationsCache } from "@/contexts/populations-cache";
+import { usePrefectures } from "@/contexts/prefectures";
 import { useSelectedPrefectures } from "@/contexts/selected-prefectures";
 import { usePopulationTypes } from "../contexts/population-types";
 import { convertPopulationToSeries } from "../helpers/convert-population-to-series";
@@ -10,6 +11,7 @@ export function PopulationChartContainer() {
   const populationsCache = usePopulationsCache();
   const selectedPrefectures = useSelectedPrefectures();
   const populationTypes = usePopulationTypes();
+  const prefectures = usePrefectures();
 
   if (selectedPrefectures.length === 0) {
     return (
@@ -25,6 +27,7 @@ export function PopulationChartContainer() {
     populationsCache,
     selectedPrefectures,
     populationTypes,
+    prefectures,
   });
 
   if (convertedSeries === null) {

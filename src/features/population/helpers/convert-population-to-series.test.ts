@@ -1,3 +1,10 @@
+// 都道府県のモックデータ
+const mockPrefectures = [
+  { code: 1, name: "北海道" },
+  { code: 2, name: "青森県" },
+  { code: 3, name: "岩手県" },
+];
+
 import { describe, expect, it, vi } from "vitest";
 
 import { convertPopulationToSeries } from "./convert-population-to-series";
@@ -80,11 +87,12 @@ describe("convertPopulationToSeries", () => {
       populationsCache,
       selectedPrefectures,
       populationTypes,
+      prefectures: mockPrefectures,
     });
     expect(result).toEqual([
       {
         type: "line",
-        name: "1",
+        name: "北海道",
         data: [
           { x: 1980, y: 1200000 },
           { x: 1990, y: 1250000 },
@@ -95,7 +103,7 @@ describe("convertPopulationToSeries", () => {
       },
       {
         type: "line",
-        name: "2",
+        name: "青森県",
         data: [
           { x: 1980, y: 1200000 },
           { x: 1990, y: 1250000 },
@@ -120,11 +128,12 @@ describe("convertPopulationToSeries", () => {
       populationsCache,
       selectedPrefectures,
       populationTypes,
+      prefectures: mockPrefectures,
     });
     expect(result).toEqual([
       {
         type: "line",
-        name: "2",
+        name: "青森県",
         data: [
           { x: 1980, y: 1200000 },
           { x: 1990, y: 1250000 },
@@ -149,6 +158,7 @@ describe("convertPopulationToSeries", () => {
       populationsCache,
       selectedPrefectures,
       populationTypes,
+      prefectures: mockPrefectures,
     });
     expect(result).toBeNull();
   });
@@ -166,6 +176,7 @@ describe("convertPopulationToSeries", () => {
       populationsCache,
       selectedPrefectures,
       populationTypes,
+      prefectures: mockPrefectures,
     });
     expect(result).toBeNull();
   });

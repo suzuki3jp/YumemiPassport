@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from "react";
 import "server-only";
 
-import { PrefecturesProvider } from "../contexts/prefectures";
+import { PrefecturesProvider } from "@/contexts/prefectures";
 import { getPrefectures } from "../get-prefectures";
 
 export async function PrefecturesContainer({ children }: PropsWithChildren) {
