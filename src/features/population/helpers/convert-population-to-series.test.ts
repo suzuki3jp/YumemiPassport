@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { convertPopulationToSeries } from "./population-chart-container";
+import { convertPopulationToSeries } from "./convert-population-to-series";
 
 // ./population-chart-container には highcharts が含まれるため、JSDOM 環境でのテスト実行時にエラーになる。
 // そのため highcharts をモック化する。
