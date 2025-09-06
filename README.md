@@ -9,7 +9,7 @@
 # 参考情報
 - **リポジトリ**: https://github.com/suzuki3jp/yumemipassport
 - **デプロイ先URL**: https://yumemi-passport.suzuki3.jp/
-- **課題の作業合計時間**: 13 時間
+- **課題の作業合計時間**: 14 時間
 - **総合的なプログラミング歴**: 4 年
 - **Webフロントエンド開発歴**: 1 年
 - **今回の課題の参考資料**: https://zenn.dev/akfm/books/nextjs-basic-principle

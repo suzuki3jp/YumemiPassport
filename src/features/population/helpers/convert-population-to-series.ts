@@ -1,3 +1,4 @@
+import type { usePrefectures } from "@//contexts/prefectures";
 import type { usePopulationsCache } from "@/contexts/populations-cache";
 import type { useSelectedPrefectures } from "@/contexts/selected-prefectures";
 import type { PopulationChart } from "../components/population-chart";
@@ -7,6 +8,7 @@ interface ConvertPopulationToSeriesOptions {
   populationsCache: ReturnType<typeof usePopulationsCache>;
   selectedPrefectures: ReturnType<typeof useSelectedPrefectures>;
   populationTypes: ReturnType<typeof usePopulationTypes>;
+  prefectures: ReturnType<typeof usePrefectures>;
 }
 
 type ConvertPopulationToSeriesReturnType =
@@ -20,6 +22,7 @@ export function convertPopulationToSeries({
   populationsCache,
   selectedPrefectures,
   populationTypes,
+  prefectures,
 }: ConvertPopulationToSeriesOptions): ConvertPopulationToSeriesReturnType {
   try {
     return selectedPrefectures
@@ -42,9 +45,13 @@ export function convertPopulationToSeries({
         // - 選択されている人口区分が存在しない（これが起きた場合は重大なコードのバグが考えられる）
         if (!targetPopulation) throw new Error();
 
+        // チェックボックスがチェックにされたときにこの関数が呼ばれているので、必ず都道府県が存在する
+        const prefecture = prefectures?.find((p) => p.code === prefCode);
+        if (!prefecture) throw new Error();
+
         return {
           type: "line",
-          name: prefCode.toString(),
+          name: prefecture.name,
           data: targetPopulation.data.map((d) => ({
             x: d.year,
             y: d.population,

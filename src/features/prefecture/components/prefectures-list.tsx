@@ -1,6 +1,6 @@
 "use client";
 import { ErrorCard } from "@/components/error-card";
-import { usePrefectures } from "../contexts/prefectures";
+import { usePrefectures } from "@/contexts/prefectures";
 import { PrefectureCheckbox } from "./prefecture-checkbox";
 
 export function PrefecturesList() {

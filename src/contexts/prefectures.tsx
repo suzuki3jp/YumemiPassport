@@ -7,9 +7,9 @@ import {
   useContext,
   useState,
 } from "react";
+import type { getPrefectures } from "@/features/prefecture/get-prefectures";
+import type { Prefecture } from "@/features/prefecture/schemas/prefecture";
 import { isOk } from "@/lib/serializable-result";
-import type { getPrefectures } from "../get-prefectures";
-import type { Prefecture } from "../schemas/prefecture";
 
 /**
  *  Fetch が失敗した場合は null にし、空配列と区別する
