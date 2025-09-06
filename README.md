@@ -4,6 +4,8 @@
 
 [ゆめみパスポート](https://hrmos.co/pages/yumemi/jobs/101000000010) フロントエンドコーディング試験用のリポジトリ
 
+![スクショ](./assets/screenshot.png)
+
 # 参考情報
 - **リポジトリ**: https://github.com/suzuki3jp/yumemipassport
 - **デプロイ先URL**: https://yumemi-passport.suzuki3.jp/
