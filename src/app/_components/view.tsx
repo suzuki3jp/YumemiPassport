@@ -1,5 +1,7 @@
+import { PopulationsCacheProvider } from "@/contexts/populations-cache";
 import { SelectedPrefecturesProvider } from "@/contexts/selected-prefectures";
 import { PrefecturesContainer } from "@/features/prefecture/components/prefectures-container";
+import { PopulationSection } from "./population-section";
 import { PrefecturesSection } from "./prefectures-section";
 
 export function HomeView() {
@@ -12,9 +14,10 @@ export function HomeView() {
 
         <SelectedPrefecturesProvider>
           <PopulationsCacheProvider>
-          <PrefecturesContainer>
-            <PrefecturesSection />
-          </PrefecturesContainer>
+            <PrefecturesContainer>
+              <PrefecturesSection />
+              <PopulationSection />
+            </PrefecturesContainer>
           </PopulationsCacheProvider>
         </SelectedPrefecturesProvider>
       </div>
