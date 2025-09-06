@@ -38,3 +38,21 @@ export enum PrefectureApiErrorCode {
    */
   FETCH_ERROR = 1001, // ステータスコードに存在しない値を使用
 }
+
+/**
+ * リトライ可能な API エラーかどうかを判定する
+ */
+export function isRetryablePrefectureApiError(
+  code: PrefectureApiErrorCode,
+): boolean {
+  switch (code) {
+    case PrefectureApiErrorCode.FETCH_ERROR:
+    case PrefectureApiErrorCode.INTERNAL_ERROR:
+      return true; // リトライする
+    case PrefectureApiErrorCode.NOT_FOUND:
+    case PrefectureApiErrorCode.FORBIDDEN:
+    case PrefectureApiErrorCode.BAD_REQUEST:
+    case PrefectureApiErrorCode.PARSE_ERROR:
+      return false; // リトライしない
+  }
+}

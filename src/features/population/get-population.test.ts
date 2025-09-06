@@ -21,7 +21,7 @@ describe("getPopulation", () => {
   });
 
   it("safeFetchの引数を検証する", async () => {
-    mockSafeFetch.mockResolvedValueOnce(
+    mockSafeFetch.mockResolvedValue(
       ok(new Response(JSON.stringify({ message: null, result: { data: [] } }))),
     );
 
@@ -34,7 +34,7 @@ describe("getPopulation", () => {
 
   it("safeFetchの返り値が異常系の場合、エラーを返す", async () => {
     const error = { message: "error" };
-    mockSafeFetch.mockResolvedValueOnce(err(error));
+    mockSafeFetch.mockResolvedValue(err(error));
 
     const result = await getPopulation(1);
     expect(isErr(result)).toBe(true);
@@ -59,7 +59,7 @@ describe("getPopulation", () => {
         ],
       },
     };
-    mockSafeFetch.mockResolvedValueOnce(
+    mockSafeFetch.mockResolvedValue(
       ok(new Response(JSON.stringify(apiResponse))),
     );
 

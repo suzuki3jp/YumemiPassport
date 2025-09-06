@@ -7,16 +7,33 @@ import {
   makeRequestHeader,
   makeUrl,
 } from "@/lib/prefecture-api/client";
-import { PrefectureApiErrorCode } from "@/lib/prefecture-api/error";
+import {
+  isRetryablePrefectureApiError,
+  PrefectureApiErrorCode,
+} from "@/lib/prefecture-api/error";
 import { PrefecturesSuccessResponse } from "@/lib/prefecture-api/response";
+import { retry } from "@/lib/retry";
 import { safeFetch } from "@/lib/safe-fetch";
-import { err, ok, type SerializableResult } from "@/lib/serializable-result";
+import {
+  err,
+  isOk,
+  ok,
+  type SerializableResult,
+} from "@/lib/serializable-result";
 import type { Prefecture } from "./schemas/prefecture";
 
 /**
  * 都道府県の一覧を取得する
  */
 export async function getPrefectures(): Promise<
+  SerializableResult<Prefecture[], PrefectureApiErrorCode>
+> {
+  return await retry(getPrefecturesWithoutRetry, (r) =>
+    isOk(r) ? false : isRetryablePrefectureApiError(r.error),
+  );
+}
+
+async function getPrefecturesWithoutRetry(): Promise<
   SerializableResult<Prefecture[], PrefectureApiErrorCode>
 > {
   const apiKey = getApiKey();
