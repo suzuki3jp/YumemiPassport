@@ -29,7 +29,7 @@ export function PopulationTypesProvider({ children }: PropsWithChildren) {
   const [popTypes, setPopTypes] = useState<PopulationTypesContextType>(null);
 
   useEffect(() => {
-    if (populationsCache) {
+    if (populationsCache.size > 0) {
       // 重複を排除しつつ、キャッシュからラベルの配列を作成
       const types = Array.from(
         new Set(

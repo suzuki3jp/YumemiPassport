@@ -66,6 +66,7 @@ export function convertPopulationToSeries({
         // null → フィルターして無視
         // fetch が完了したら 再レンダリングされるので OK
         if (populations === undefined) return null;
+        if (populationTypes === null) return null;
 
         const targetPopulation = populations?.find(
           (p) => p.label === populationTypes?.selected,
