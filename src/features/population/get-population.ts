@@ -6,16 +6,36 @@ import {
   makeRequestHeader,
   makeUrl,
 } from "@/lib/prefecture-api/client";
-import { PrefectureApiErrorCode } from "@/lib/prefecture-api/error";
+import {
+  isRetryablePrefectureApiError,
+  PrefectureApiErrorCode,
+} from "@/lib/prefecture-api/error";
 import { PopulationSuccessResponse } from "@/lib/prefecture-api/response";
+import { retry } from "@/lib/retry";
 import { safeFetch } from "@/lib/safe-fetch";
-import { err, ok, type SerializableResult } from "@/lib/serializable-result";
+import {
+  err,
+  isOk,
+  ok,
+  type SerializableResult,
+} from "@/lib/serializable-result";
 import type { Population } from "./schemas/population";
 
 /**
  * 人口データを取得する
  */
 export async function getPopulation(
+  prefCode: number,
+): Promise<SerializableResult<Population[], PrefectureApiErrorCode>> {
+  return await retry(
+    () => {
+      return getPopulationWithoutRetry(prefCode);
+    },
+    (r) => (isOk(r) ? false : isRetryablePrefectureApiError(r.error)),
+  );
+}
+
+async function getPopulationWithoutRetry(
   prefCode: number,
 ): Promise<SerializableResult<Population[], PrefectureApiErrorCode>> {
   const apiKey = getApiKey();
