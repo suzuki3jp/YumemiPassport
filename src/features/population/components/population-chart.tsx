@@ -41,6 +41,8 @@ export function PopulationChart({ series }: PopulationChartProps) {
             maxWidth: 500,
           },
           chartOptions: {
+            xAxis: { title: { text: "" } },
+            yAxis: { title: { text: "" } },
             legend: {
               layout: "horizontal",
               align: "center",
